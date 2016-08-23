@@ -44,17 +44,20 @@ values."
      git
      markdown
      ;; org
-     (shell :variables
-            shell-default-height 30
-            shell-default-position 'bottom
-            shell-default-shell 'eshell)
-     ;; spell-checking
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position 'bottom)
      ;; syntax-checking
-     version-control
-     osx
+     ;; version-control
+     ;; languages
      javascript
      typescript
      yaml
+     php
+
+     ;; other
+     ansible
+     colors
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -63,6 +66,7 @@ values."
    dotspacemacs-additional-packages
    '(
      editorconfig
+     smart-tabs-mode
      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -131,8 +135,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Sauce Code Powerline"
-                               :size 16
+   dotspacemacs-default-font '("Source Code Pro"
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -299,10 +303,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
                             (const . "#00bbff")
                             (comment . "#454545")
                             )))
-  (spaceline-define-segment foo
-    (identity "foo"))
-  (spaceline-toggle-evil-state-off)
-  (spaceline-toggle-foo-on)
+  (setq spacemacs-theme-comment-bg nil)
   )
 
 (defun dotspacemacs/user-config ()
@@ -312,11 +313,33 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; osx-specific options
   (setq ns-use-srgb-colorspace nil)
   (toggle-frame-maximized)
   (setq mac-right-option-modifier nil)
+
   (fset 'evil-visual-update-x-selection 'ignore)
-  (setq spacemacs-theme-comment-bg nil)
+
+  ;; key mappings
+  (define-key evil-insert-state-map (kbd "C-]") 'end-of-line)
+
+  ;; variables & options
   (setq powerline-default-separator 'arrow)
+  (setq-default js2-basic-offset 2)
+  (setq-default js-indent-level 2)
+  (setq-default typescript-indent-level 2)
+  (global-linum-mode)
+
+  ;; mode configuration
   (editorconfig-mode 1)
+  (smart-tabs-mode 1)
+
+  ;; Enable TypeScript completion by default
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (tide-setup)
+              (flycheck-mode +1)
+              (eldoc-mode +1)
+              (company-mode-on)
+              ))
   )
